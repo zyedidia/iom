@@ -17,6 +17,7 @@ iom_load(char *image, size_t size)
         iom_error = IOM_ERR_STDIO;
         return NULL;
     }
+    unlink(template);
     if (write(fdtmp, image, size) != (ssize_t) size) {
         iom_error = IOM_ERR_STDIO;
         return NULL;
