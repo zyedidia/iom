@@ -8,6 +8,7 @@
 
 struct IOM {
     Elf *elf;
+    int fd;
 };
 
 struct IOM *

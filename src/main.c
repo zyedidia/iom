@@ -15,7 +15,7 @@ main(int argc, char **argv)
 {
     struct arg_lit *help = arg_lit0("h", "help", "Show help");
     struct arg_lit *verbose = arg_lit0("V",  "verbose", "Verbose output");
-    struct arg_file *output = arg_file0("o", "output", "<file>", "Output file");
+    struct arg_file *output = arg_filen("o", "output", "<file>", 1, 100, "Output file");
     struct arg_file *inputs = arg_filen(NULL, NULL, "<file>", 1, 100, "Input files");
     struct arg_end *end = arg_end(20);
 
@@ -42,10 +42,6 @@ main(int argc, char **argv)
 
     if (verbose->count > 0) {
         printf("Verbose mode enabled\n");
-    }
-
-    if (output->count > 0) {
-        printf("Output file: %s\n", output->filename[0]);
     }
 
     if (elf_version(EV_CURRENT) == EV_NONE) {
