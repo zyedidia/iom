@@ -28,6 +28,10 @@ iom_errmsg(void)
         return strerror(errno);
     case IOM_ERR_ELF_KIND:
         return "not an ELF file";
+    case IOM_ERR_ARCH:
+        return "unsupported architecture";
+    case IOM_ERR_CS_OPEN:
+        return "could not initialize capstone";
     }
     return "unknown error";
 }

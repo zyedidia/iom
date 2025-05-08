@@ -3,4 +3,5 @@ srcs = files(
   'error.c',
   'elf.c',
   'file.c',
+  'dis.c',
 )

@@ -1,4 +1,4 @@
-project('iom', ['c'], default_options: ['warning_level=3', 'buildtype=release'])
+project('iom', ['c'], default_options: ['warning_level=1', 'buildtype=release'])
 
 subdir('src')
 
