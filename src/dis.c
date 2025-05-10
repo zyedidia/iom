@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <capstone/capstone.h>
 
 #include "arm64.h"
@@ -33,5 +35,45 @@ disinstrs(struct IOMSection *sec, Elf_Scn *scn)
     if (!disinit(&ehdr, &handle))
         return false;
 
+    Elf_Data *data = elf_getdata(scn, NULL);
+    if (data == NULL) {
+        iom_error = IOM_ERR_ELF;
+        goto err;
+    }
+
+    const uint8_t *buf = (const uint8_t *) data->d_buf;
+    size_t size = data->d_size;
+
+    size_t n = 0;
+    while (n < size) {
+        cs_insn *insn = NULL;
+        size_t count = cs_disasm(handle, &buf[n], size - n, n, 0, &insn);
+        if (count != 1) {
+            iom_error = IOM_ERR_DISAS;
+            // TODO: provide address of instruction in error message.
+            goto err;
+        }
+
+        struct IOMInstr *instr = malloc(sizeof(struct IOMInstr));
+        uint8_t *bytes = malloc(insn->size);
+        memcpy(bytes, &buf[n], insn->size);
+
+        *instr = (struct IOMInstr) {
+            .m_insn = insn,
+            .m_sec = sec,
+            .m_offset = n,
+            .bytes = bytes,
+            .size = insn->size,
+        };
+
+        // insert into linked list
+
+        n += insn->size;
+    }
+
     return true;
+
+err:
+    cs_close(&handle);
+    return false;
 }

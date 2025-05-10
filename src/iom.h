@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include <gelf.h>
+#include <capstone/capstone.h>
 
 #define EXPORT __attribute__((visibility("default")))
 
@@ -10,6 +11,8 @@ struct IOMInstr {
     uint8_t *bytes;
     size_t size;
 
+    size_t m_offset;
+    cs_insn *m_insn;
     struct IOMSection *m_sec;
     struct IOMInstr *m_next;
     struct IOMInstr *m_prev;
@@ -31,9 +34,59 @@ struct IOM {
     size_t nsections;
 };
 
+struct IOMLoc {
+    struct IOMInstr *instr;
+    size_t offset;
+};
+
 struct IOMSymbol {
     uint64_t addr;
     size_t size;
+
+    struct IOMLoc m_start;
+    struct IOMLoc m_end;
+};
+
+struct IOMRelocCode {
+    struct IOMLoc loc;
+};
+
+struct IOMRelocValue {
+    struct IOMInstr *instr; // should this be IOMLoc?
+    struct IOMLoc symstart; // should this be IOMLoc?
+    struct IOMLoc value;
+};
+
+struct IOMRelocNew {
+    struct IOMInstr *instr; // should this be IOMLoc?
+    unsigned short type;
+
+    // Reloc has a symbol if name is non-null
+    const char *name;
+    struct IOMLoc value; // should this be IOMLoc?
+    GElf_Half shndx;
+    unsigned char info;
+};
+
+struct IOMRelocOther {
+    bool _none;
+};
+
+enum IOMRelocKind {
+    IOM_RELOC_OTHER,
+    IOM_RELOC_CODE,
+    IOM_RELOC_VALUE,
+    IOM_RELOC_NEW,
+};
+
+struct IOMReloc {
+    enum IOMRelocKind kind;
+    union {
+        struct IOMRelocCode code;
+        struct IOMRelocValue value;
+        struct IOMRelocOther other;
+        struct IOMRelocNew new_;
+    } r;
 };
 
 struct IOM *
@@ -70,6 +123,7 @@ enum {
     IOM_ERR_ELF_KIND = 4,
     IOM_ERR_ARCH     = 5,
     IOM_ERR_CS_OPEN  = 6,
+    IOM_ERR_DISAS    = 7,
 };
 
 // Returns the error code for the current error.

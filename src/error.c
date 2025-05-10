@@ -32,6 +32,8 @@ iom_errmsg(void)
         return "unsupported architecture";
     case IOM_ERR_CS_OPEN:
         return "could not initialize capstone";
+    case IOM_ERR_DISAS:
+        return "failed to disassemble instruction";
     }
     return "unknown error";
 }
