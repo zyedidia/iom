@@ -34,6 +34,8 @@ iom_errmsg(void)
         return "could not initialize capstone";
     case IOM_ERR_DISAS:
         return "failed to disassemble instruction";
+    case IOM_ERR_NO_SYMTAB:
+        return "could not find symbol table";
     }
     return "unknown error";
 }

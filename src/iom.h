@@ -116,14 +116,15 @@ iom_symbol(struct IOM *iom, const char *symbol);
 extern _Thread_local int iom_error;
 
 enum {
-    IOM_ERR_NONE     = 0,
-    IOM_ERR_ELF      = 1,
-    IOM_ERR_ALLOC    = 2,
-    IOM_ERR_STDIO    = 3,
-    IOM_ERR_ELF_KIND = 4,
-    IOM_ERR_ARCH     = 5,
-    IOM_ERR_CS_OPEN  = 6,
-    IOM_ERR_DISAS    = 7,
+    IOM_ERR_NONE      = 0,
+    IOM_ERR_ELF       = 1,
+    IOM_ERR_ALLOC     = 2,
+    IOM_ERR_STDIO     = 3,
+    IOM_ERR_ELF_KIND  = 4,
+    IOM_ERR_ARCH      = 5,
+    IOM_ERR_CS_OPEN   = 6,
+    IOM_ERR_DISAS     = 7,
+    IOM_ERR_NO_SYMTAB = 8,
 };
 
 // Returns the error code for the current error.

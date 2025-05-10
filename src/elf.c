@@ -112,7 +112,7 @@ loadinstrs(struct IOM *iom)
 
     Elf_Scn **relascns = calloc(sizeof(Elf_Scn *), shnum);
     size_t nscn = 0;
-    Elf_Scn *symtab;
+    Elf_Scn *symtab = NULL;
     Elf_Scn *scn = NULL;
     while ((scn = elf_nextscn(iom->m_elf, scn)) != NULL) {
         GElf_Shdr shdr;
@@ -124,6 +124,11 @@ loadinstrs(struct IOM *iom)
             relascns[shdr.sh_info] = scn;
         if (shdr.sh_type == SHT_SYMTAB)
             symtab = scn;
+    }
+
+    if (!symtab) {
+        iom_error = IOM_ERR_NO_SYMTAB;
+        goto err;
     }
 
     struct IOMSection *sections = malloc(sizeof(struct IOMSection) * nscn);
